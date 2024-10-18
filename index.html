@@ -1,1 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File share</title>
+</head>
+<body>
+    <form>
+        <input type="file" id="fileInput" name="fileToUpload">
+        <input type="submit" id="uploadButton" value="Upload File">
+    </form>
+    <script>
+const fileInput = document.getElementById('fileInput'); // Replace with your file input element
+const uploadButton = document.getElementById('uploadButton'); // Replace with your upload button
 
+uploadButton.addEventListener('click', async () => {
+  const file = fileInput.files[0];
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await fetch('/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      console.log('File uploaded successfully!');
+    } else {
+      console.error('Error uploading file:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error uploading file:', error);
+  }
+});
+    </script>
+</body>
+</html>
