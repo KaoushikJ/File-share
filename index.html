@@ -3,37 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File share</title>
+    <title>File Upload and Access (No Backend)</title>
+
 </head>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="file"] {
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    padding: 8px;
+    background-color: #f9f9f9;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ddd;
+}
+
+ul li a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
+
+    </style>
 <body>
-    <form>
-        <input type="file" id="fileInput" name="fileToUpload">
-        <input type="submit" id="uploadButton" value="Upload File">
-    </form>
+    <div class="container">
+        <h1>File Upload and Access</h1>
+        
+        <!-- Upload Form -->
+        <form id="uploadForm">
+            <input type="file" id="fileInput" />
+            <button type="submit">Upload File</button>
+        </form>
+        
+        <!-- Uploaded Files List -->
+        <h2>Uploaded Files</h2>
+        <ul id="fileList"></ul>
+    </div>
+
     <script>
-const fileInput = document.getElementById('fileInput'); // Replace with your file input element
-const uploadButton = document.getElementById('uploadButton'); // Replace with your upload button
+        const fileInput = document.getElementById('fileInput');
+const uploadForm = document.getElementById('uploadForm');
+const fileList = document.getElementById('fileList');
+let filesArray = [];  // Array to hold files in memory
 
-uploadButton.addEventListener('click', async () => {
-  const file = fileInput.files[0];
-  const formData = new FormData();
-  formData.append('file', file);
-
-  try {
-    const response = await fetch('/upload', {
-      method: 'POST',
-      body: formData
-    });
-
-    if (response.ok) {
-      console.log('File uploaded successfully!');
+uploadForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const file = fileInput.files[0];
+    if (file) {
+        // Add the file to the memory array
+        filesArray.push(file);
+        displayFiles();
     } else {
-      console.error('Error uploading file:', response.statusText);
+        alert("Please select a file to upload.");
     }
-  } catch (error) {
-    console.error('Error uploading file:', error);
-  }
 });
+
+// Display files from memory
+function displayFiles() {
+    fileList.innerHTML = '';
+    
+    filesArray.forEach((file, index) => {
+        const li = document.createElement('li');
+        const fileURL = URL.createObjectURL(file);
+
+        li.innerHTML = `
+            <span>${file.name}</span>
+            <a href="${fileURL}" download="${file.name}">Download</a>
+            <button onclick="removeFile(${index})">Delete</button>
+        `;
+        fileList.appendChild(li);
+    });
+}
+
+// Remove a file from memory
+function removeFile(index) {
+    filesArray.splice(index, 1);
+    displayFiles();
+}
+
     </script>
 </body>
 </html>
